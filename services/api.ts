@@ -1,61 +1,56 @@
-export const TMDB_CONFIG = {
-  BASE_URL: 'https://api.themoviedb.org/3',
-  API_KEY: process.env.EXPO_PUBLIC_MOVIE_API_KEY,
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${process.env.EXPO_PUBLIC_MOVIE_API_KEY}`,
-  },
-}
+import instance from '@/services/axios'
 
 export const fetchMovies = async ({ query }: { query: string }) => {
   const endpoint = query
-    ? `${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-    : `${TMDB_CONFIG.BASE_URL}/discover/movie?sort_by=popularity.desc`
+    ? `/search/movie?query=${encodeURIComponent(query)}`
+    : `/discover/movie?sort_by=popularity.desc`
 
-  const response = await fetch(endpoint, {
-    method: 'GET',
-    headers: TMDB_CONFIG.headers,
-  })
+  try {
+    const response = await instance.get(endpoint)
 
-  if (!response.ok) {
-    // @ts-ignore
-    throw new Error('Failed to fetch movies', response.statusText)
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to fetch movies: ${response.statusText}`)
+    }
+
+    return response.data.results
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    )
   }
-
-  const data = await response.json()
-  return data.results
 }
 
 export const fetchMovieDetails = async (movieId: number) => {
-  const endpoint = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}`
+  const endpoint = `/movie/${movieId}`
 
-  const response = await fetch(endpoint, {
-    method: 'GET',
-    headers: TMDB_CONFIG.headers,
-  })
+  try {
+    const response = await instance.get(endpoint)
 
-  if (!response.ok) {
-    // @ts-ignore
-    throw new Error('Failed to fetch movie details', response.statusText)
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to fetch movie details ${response.statusText}`)
+    }
+
+    return response.data
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    )
   }
-
-  const data = await response.json()
-  return data
 }
 
 export const getReleaseDate = async (movieId: number) => {
-  const endpoint = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}/release_dates`
+  const endpoint = `/movie/${movieId}/release_dates`
 
-  const response = await fetch(endpoint, {
-    method: 'GET',
-    headers: TMDB_CONFIG.headers,
-  })
+  try {
+    const response = await instance.get(endpoint)
 
-  if (!response.ok) {
-    // @ts-ignore
-    throw new Error('Failed to fetch movie details', response.statusText)
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to fetch movie details ${response.statusText}`)
+    }
+    return response.data.results
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Unknown error occurred'
+    )
   }
-
-  const data = await response.json()
-  return data.results
 }
