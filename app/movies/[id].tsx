@@ -6,17 +6,12 @@ import useFetch from '@/services/useFetch'
 import formattedDate from '@/utils/formatDate'
 import getMoney from '@/utils/getMoney'
 import getRunTimeMovie from '@/utils/getRunTimeMovie'
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Link } from 'expo-router'
 import React, { Fragment } from 'react'
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useSelector } from 'react-redux'
 
 type RootStackParamList = {
   MovieDetail: { id: number }
@@ -26,8 +21,9 @@ type MovieDetailRouteProp = RouteProp<RootStackParamList, 'MovieDetail'>
 
 const MovieDetail = () => {
   const router = useRoute<MovieDetailRouteProp>()
-  const navigation = useNavigation()
   const { id } = router.params
+
+  const { user } = useSelector((state: any) => state.users)
 
   const { data, loading, error } = useFetch<MovieDetails>(() =>
     fetchMovieDetails(id as number)
@@ -38,6 +34,9 @@ const MovieDetail = () => {
   >(() => getReleaseDate(id as number))
 
   const date = new Date(data?.release_date as string)
+
+  const isLoggedIn = !!(user?.tmdbSessionId && data?.id)
+
   return (
     <View className='flex-1 bg-primary '>
       <ScrollView
@@ -56,13 +55,20 @@ const MovieDetail = () => {
             resizeMode='cover'
           />
 
-          <View className='absolute bottom-0 right-6 translate-y-1/2 bg-white rounded-full p-4'>
+          <Link
+            href={
+              isLoggedIn && data?.id
+                ? `/movies/${data.id}/watching`
+                : `/(auth)/login`
+            }
+            className='absolute bottom-0 right-6 translate-y-1/2 bg-white rounded-full p-4'
+          >
             <Image
               source={icons.play}
               className='size-8'
               resizeMode='contain'
             />
-          </View>
+          </Link>
         </View>
 
         <View className='p-5 pt-8'>
@@ -193,12 +199,12 @@ const MovieDetail = () => {
                 ))}
               </View>
             </View>
-            <Pressable onPress={() => navigation.goBack()}>
+            <Link href='/(tabs)'>
               <LinearGradient
                 colors={['#D6C6FF', '#A18CFF']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={{ borderRadius: 8 }}
+                style={{ borderRadius: 8, width: '100%' }}
               >
                 <View className='flex-row justify-center items-center px-4 py-3 gap-2'>
                   <Text className='text-dark-100 font-bold mr-2'>
@@ -210,7 +216,7 @@ const MovieDetail = () => {
                   />
                 </View>
               </LinearGradient>
-            </Pressable>
+            </Link>
           </View>
         </View>
       </ScrollView>
