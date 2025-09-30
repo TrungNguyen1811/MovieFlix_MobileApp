@@ -1,14 +1,15 @@
 import { Movie, TrendingMovie } from '@/interfaces/interfaces'
-import { Client, Databases, ID, Query } from 'react-native-appwrite'
+import { Account, Client, Databases, ID, Query } from 'react-native-appwrite'
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!
 const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!
 
-const client = new Client()
+export const client = new Client()
   .setEndpoint('https://sfo.cloud.appwrite.io/v1')
   .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!)
 
-const database = new Databases(client)
+export const database = new Databases(client)
+export const account = new Account(client)
 
 export const updateSearchCount = async (query: string, movie: Movie) => {
   try {
