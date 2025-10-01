@@ -36,7 +36,7 @@ const CustomInput = ({
           onChangeText={formik.handleChange(name)}
           onBlur={formik.handleBlur(name)}
           value={formik.values[name]}
-          secureTextEntry={!showPassword}
+          secureTextEntry={showPassword !== undefined ? !showPassword : false}
           {...props}
         />
 
