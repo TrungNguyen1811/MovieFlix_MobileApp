@@ -1,12 +1,6 @@
-import MovieCard from '@/components/MovieCard'
-import SearchBar from '@/components/Search'
-import { icons } from '@/constants/icons'
-import { images } from '@/constants/images'
-import { fetchMovies } from '@/services/api'
-import { updateSearchCount } from '@/services/appwrite'
-import useFetch from '@/services/useFetch'
-import { useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
+import { useRouter } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {
   ActivityIndicator,
   FlatList,
@@ -15,10 +9,18 @@ import {
   Text,
   View,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { icons } from '@/constants/icons'
+import { images } from '@/constants/images'
+
+import { fetchMovies } from '@/services/api'
+import { updateSearchCount } from '@/services/appwrite'
+import useFetch from '@/services/useFetch'
+
+import MovieCard from '@/components/MovieCard'
+import SearchBar from '@/components/Search'
 
 const Search = () => {
-  const router = useRouter()
   const [query, setQuery] = React.useState('')
 
   const {
@@ -42,10 +44,11 @@ const Search = () => {
   }, [query])
 
   useEffect(() => {
-    if (movies?.length > 0 && movies?.[0]) {
+    if (movies?.length > 0 && query.trim()) {
+      console.log('movies[0]', movies[0])
       updateSearchCount(query, movies[0])
     }
-  }, [movies])
+  }, [movies, query])
 
   return (
     <SafeAreaView className='flex-1 bg-primary'>

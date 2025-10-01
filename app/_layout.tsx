@@ -1,21 +1,34 @@
-import { store } from '@/store/store'
-import { Stack } from 'expo-router'
+import { useEffect } from 'react'
 import { Provider } from 'react-redux'
+import { Stack } from 'expo-router'
+
+import { store } from '@/store/store'
+import { restoreUser } from '@/services/auth'
+
+import { useAppDispatch } from '@/hooks/hooks'
+
 import './global.css'
 
-export default function RootLayout() {
+function RootLayoutInner() {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(restoreUser())
+  }, [dispatch])
+
   return (
-    <>
-      <Provider store={store}>
-        {/* <StatusBar hidden={true} /> */}
-        <Stack>
-          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-          <Stack.Screen name='movies/[id]' options={{ headerShown: false }} />
-          <Stack.Screen name='login' options={{ headerShown: false }} />
-          <Stack.Screen name='signup' options={{ headerShown: false }} />
-        </Stack>
-      </Provider>
-    </>
+    <Stack>
+      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+      <Stack.Screen name='movies/[id]' options={{ headerShown: false }} />
+      <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+    </Stack>
   )
 }
 
+export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <RootLayoutInner />
+    </Provider>
+  )
+}

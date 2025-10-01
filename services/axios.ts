@@ -11,7 +11,7 @@ export default instance
 
 instance.interceptors.request.use(
   (request) => {
-    const accessToken = process.env.EXPO_PUBLIC_MOVIE_API_KEY
+    const accessToken = process.env.EXPO_PUBLIC_MOVIE_API_RAT
     if (accessToken) {
       request.headers['Authorization'] = `Bearer ${accessToken}`
     }

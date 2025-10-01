@@ -1,17 +1,22 @@
-import DotSeparator from '@/components/ui/DotSeparator'
-import { icons } from '@/constants/icons'
-import { MovieDetails, ReleaseDates } from '@/interfaces/interfaces'
-import { fetchMovieDetails, getReleaseDate } from '@/services/api'
-import useFetch from '@/services/useFetch'
-import formattedDate from '@/utils/formatDate'
-import getMoney from '@/utils/getMoney'
-import getRunTimeMovie from '@/utils/getRunTimeMovie'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link } from 'expo-router'
 import React, { Fragment } from 'react'
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { useSelector } from 'react-redux'
+
+import { icons } from '@/constants/icons'
+
+import { MovieDetails, ReleaseDates } from '@/interfaces/interfaces'
+import { fetchMovieDetails, getReleaseDate } from '@/services/api'
+import useFetch from '@/services/useFetch'
+
+import DotSeparator from '@/components/ui/DotSeparator'
+
+import { useAppSelector } from '@/hooks/hooks'
+
+import getRunTimeMovie from '@/utils/getRunTimeMovie'
+import formattedDate from '@/utils/formatDate'
+import getMoney from '@/utils/getMoney'
 
 type RootStackParamList = {
   MovieDetail: { id: number }
@@ -23,9 +28,9 @@ const MovieDetail = () => {
   const router = useRoute<MovieDetailRouteProp>()
   const { id } = router.params
 
-  const { user } = useSelector((state: any) => state.users)
+  const { user, error } = useAppSelector((state) => state.users)
 
-  const { data, loading, error } = useFetch<MovieDetails>(() =>
+  const { data, loading } = useFetch<MovieDetails>(() =>
     fetchMovieDetails(id as number)
   )
 
@@ -35,7 +40,7 @@ const MovieDetail = () => {
 
   const date = new Date(data?.release_date as string)
 
-  const isLoggedIn = !!(user?.tmdbSessionId && data?.id)
+  const isLoggedIn = !!(user && data?.id)
 
   return (
     <View className='flex-1 bg-primary '>

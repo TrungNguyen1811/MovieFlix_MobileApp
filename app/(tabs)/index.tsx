@@ -1,11 +1,3 @@
-import MovieCard from '@/components/MovieCard'
-import SearchBar from '@/components/Search'
-import TrendingCard from '@/components/TrendingCard'
-import { icons } from '@/constants/icons'
-import { images } from '@/constants/images'
-import { fetchMovies } from '@/services/api'
-import { getTrendingMovies } from '@/services/appwrite'
-import useFetch from '@/services/useFetch'
 import { useRouter } from 'expo-router'
 import {
   ActivityIndicator,
@@ -15,6 +7,16 @@ import {
   Text,
   View,
 } from 'react-native'
+import { icons } from '@/constants/icons'
+import { images } from '@/constants/images'
+
+import MovieCard from '@/components/MovieCard'
+import SearchBar from '@/components/Search'
+import TrendingCard from '@/components/TrendingCard'
+
+import { fetchMovies } from '@/services/api'
+import { getTrendingMovies } from '@/services/appwrite'
+import useFetch from '@/services/useFetch'
 
 export default function Index() {
   const router = useRouter()
@@ -64,6 +66,7 @@ export default function Index() {
                   Trending Movies
                 </Text>
                 <FlatList
+                  className='flex-grow-0'
                   data={trendingMovies}
                   renderItem={({ item, index }) => (
                     <TrendingCard index={index} movie={item} />
@@ -72,12 +75,11 @@ export default function Index() {
                   horizontal={true}
                   contentContainerStyle={{
                     justifyContent: 'flex-start',
-                    width: '100%',
-                    gap: 15,
                     padding: 5,
+                    gap: 15,
                     marginBottom: 10,
                   }}
-                  // showsHorizontalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}
                 />
               </View>
             )}
@@ -106,4 +108,3 @@ export default function Index() {
     </View>
   )
 }
-

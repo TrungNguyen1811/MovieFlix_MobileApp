@@ -1,51 +1,76 @@
-import { SignUp } from '@/services/auth'
 import { createSlice } from '@reduxjs/toolkit'
+import { login, logout, restoreUser, signUp } from '@/services/auth'
 
-interface UserState {
-  userId: string | null
+export interface UserState {
+  userId: string
+  name?: string
   email: string
-  password: string
-  tmdbSessionId?: string
+  tmdbSessionId: string
 }
 
-const UserState: UserState = {
-  userId: null,
-  email: '',
-  password: '',
-  tmdbSessionId: '',
-}
-
-interface AuthState {
-  user: UserState
-  status: 'idle' | 'loading' | 'succeeded' | 'failed'
+export interface AuthState {
+  user: UserState | null
+  loading: boolean
   error: string | null
 }
 
 const initialState: AuthState = {
-  user: UserState || null,
-  status: 'idle' as 'idle' | 'loading' | 'succeeded' | 'failed',
-  error: null as string | null,
+  user: null,
+  loading: false,
+  error: null,
 }
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(SignUp.pending, (state) => {
-        state.status = 'loading'
+      .addCase(signUp.pending, (state) => {
+        state.loading = true
+        state.error = null
       })
-      .addCase(SignUp.fulfilled, (state) => {
-        state.status = 'succeeded'
+      .addCase(signUp.fulfilled, (state) => {
+        state.loading = false
       })
-      .addCase(SignUp.rejected, (state, action) => {
-        state.status = 'failed'
+      .addCase(signUp.rejected, (state, action) => {
+        state.loading = false
         state.error = action.payload as string
+      })
+
+      .addCase(login.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+      })
+
+      .addCase(restoreUser.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(restoreUser.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+      })
+      .addCase(restoreUser.rejected, (state, action) => {
+        state.loading = false
+        state.user = null
+        state.error = action.payload as string
+      })
+
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null
+        state.loading = false
+        state.error = null
       })
   },
 })
-
-export const {} = authSlice.actions
 
 export default authSlice.reducer
